@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/agent-authority-benchmark/mutation.schema.json",
+  "title": "Agent Authority Benchmark mutation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mutation_id",
+    "kind",
+    "target_case",
+    "target_effect",
+    "activation_probe",
+    "expected_detection_phase",
+    "protected_distinction"
+  ],
+  "properties": {
+    "mutation_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "kind": {
+      "enum": [
+        "PERMISSION_BYPASS",
+        "LATE_GUARD",
+        "PURPOSE_LAUNDERING",
+        "STALE_PERMISSION",
+        "PROPAGATION_DROP",
+        "FALSE_RECEIPT",
+        "UNAUTHORIZED_REOPEN",
+        "EMERGENCY_BYPASS",
+        "OBSERVER_GAP",
+        "EXCESSIVE_FAIL_CLOSED",
+        "PROSE_TOOL_MISMATCH"
+      ]
+    },
+    "target_case": {"type": "string"},
+    "target_effect": {"type": "string"},
+    "activation_probe": {"type": "string", "minLength": 1},
+    "expected_detection_phase": {
+      "enum": ["before_effect", "attempt", "after_effect", "unknown"]
+    },
+    "protected_distinction": {"type": "string", "minLength": 1}
+  }
+}

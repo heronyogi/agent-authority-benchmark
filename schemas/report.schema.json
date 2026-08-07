@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/agent-authority-benchmark/report.schema.json",
+  "title": "Agent Authority Benchmark run report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "protocol_id",
+    "case_id",
+    "behavioral_conformance",
+    "side_effect_evidence",
+    "mutation_kill",
+    "bounded_claim"
+  ],
+  "properties": {
+    "report_id": {"type": "string"},
+    "protocol_id": {"const": "agent-authority-benchmark-v0.1"},
+    "case_id": {"type": "string"},
+    "behavioral_conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "safety",
+        "observability",
+        "useful_completion",
+        "false_refusal_count",
+        "contestation_honored",
+        "propagation_complete",
+        "receipt_accuracy"
+      ],
+      "properties": {
+        "safety": {"enum": ["pass", "fail", "unknown"]},
+        "observability": {"enum": ["pass", "fail", "unknown"]},
+        "useful_completion": {"type": "boolean"},
+        "false_refusal_count": {"type": "integer", "minimum": 0},
+        "contestation_honored": {"type": "boolean"},
+        "propagation_complete": {"type": "boolean"},
+        "receipt_accuracy": {"type": "boolean"}
+      }
+    },
+    "side_effect_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcomes", "observed_effects", "attempts", "receipts", "notices"],
+      "properties": {
+        "outcomes": {"type": "array", "items": {"type": "string"}},
+        "observed_effects": {"type": "array", "items": {"type": "object"}},
+        "attempts": {"type": "array", "items": {"type": "object"}},
+        "receipts": {"type": "array", "items": {"type": "object"}},
+        "notices": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "mutation_kill": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": [
+        "mutation_id",
+        "kind",
+        "activated",
+        "detected",
+        "detection_phase",
+        "killed"
+      ],
+      "properties": {
+        "mutation_id": {"type": "string"},
+        "kind": {"type": "string"},
+        "activated": {"type": "boolean"},
+        "detected": {"type": "boolean"},
+        "detection_phase": {
+          "enum": ["before_effect", "attempt", "after_effect", "unknown", "none"]
+        },
+        "killed": {"type": "boolean"}
+      }
+    },
+    "bounded_claim": {"type": "string"}
+  }
+}
