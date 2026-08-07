@@ -1,0 +1,74 @@
+{
+  "manifest_schema": "https://raw.githubusercontent.com/heronyogi/agent-governance-systems/main/schemas/system-manifest.v0.1.schema.json",
+  "contract_version": "0.1.0",
+  "system_id": "agent-authority-integrity",
+  "name": "Agent Authority Benchmark",
+  "repository_role": "system-root",
+  "repository": {
+    "url": "https://github.com/heronyogi/agent-authority-benchmark",
+    "default_branch": "main",
+    "manifest_path": "system.manifest.json"
+  },
+  "lifecycle": {
+    "state": "reference",
+    "system_version": "0.1.0",
+    "stable_version": "0.1.0"
+  },
+  "boundary": {
+    "governing_question": "Which consequential effects remained inside a declared authority boundary?",
+    "primary_invariant": "No unauthorized consequential side effect may occur inside the declared and confirmed observation scope.",
+    "in_scope": [
+      "Purpose-scoped permissions and restrictions",
+      "Observed effects across instrumented stores, tools, queues, disclosures, and downstream agents",
+      "Prevention, detection, receipt accuracy, mutation activation, and preserved authorized usefulness"
+    ],
+    "out_of_scope": [
+      "Real-world legitimacy of an authority declaration",
+      "Truth of upstream interpretations",
+      "Complete observation of uninstrumented external systems",
+      "Production safety or universal agent conformance"
+    ]
+  },
+  "interfaces": {
+    "provides": [
+      {
+        "id": "authority-conformance-report",
+        "version": "0.1",
+        "stability": "experimental",
+        "description": "A report separating behavioral conformance, side-effect evidence, receipt accuracy, and mutation-kill results."
+      }
+    ],
+    "consumes": []
+  },
+  "relationships": [
+    {
+      "system_id": "agent-context-integrity",
+      "kind": "sibling",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "runtime_systems": [],
+    "evaluation_systems": []
+  },
+  "claim_boundary": {
+    "claims": [
+      "The deterministic reference harness can evaluate declared authority boundaries inside its synthetic observation scope."
+    ],
+    "does_not_claim": [
+      "That an upstream readout is true",
+      "That declared authority is legitimate in the real world",
+      "That a passing synthetic result proves production safety",
+      "That this system grants authority to another system"
+    ]
+  },
+  "ip_boundary": {
+    "public_basis": "Observable permissions, attempted operations, consequential effects, observation coverage, and receipts.",
+    "excluded": [
+      "Private ontology primitives or mappings",
+      "Symbolic registries, signatures, or morphologies",
+      "Private derivation and composition rules",
+      "Private correspondence, identities, and sealed cases"
+    ]
+  }
+}
