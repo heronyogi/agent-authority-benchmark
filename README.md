@@ -100,6 +100,17 @@ authority boundary when operations can create consequential side effects.
 
 The projects are siblings, not dependencies.
 
+## Federated system contract
+
+This repository is the root of the `agent-authority-integrity` system in the
+[Agent Governance Systems](https://github.com/heronyogi/agent-governance-systems)
+catalog. Its boundary, invariant, interfaces, non-claims, and independence are
+declared in [SYSTEM.md](SYSTEM.md), [CONTRACTS.md](CONTRACTS.md), and the
+machine-readable [system manifest](system.manifest.json).
+
+Federation membership does not create a runtime dependency or transfer
+authority between sibling systems.
+
 ## Independence and intellectual-property boundary
 
 This repository uses ordinary terms such as subject, purpose, permission,
