@@ -15,11 +15,12 @@ The artifact does not grant permission to another system. A consumer remains
 responsible for its own purpose, authority, compatibility checks, and
 consequential effects.
 
-## Future context adapter
+## FET-001 context consumer
 
-A future adapter may accept a versioned governed-context artifact from a
-context-integrity system. Acceptance would mean only that the artifact met the
-adapter's structural and provenance rules. It would not establish:
+The experimental FET-001 consumer accepts `federated-context-envelope` v0.1
+from a context-integrity system. Acceptance means only that the artifact met
+the frozen schema, integrity, freshness, scope, and Context rules. It does not
+establish:
 
 - truth beyond the producer's claim boundary;
 - purpose-specific permission for an effect;
@@ -28,6 +29,10 @@ adapter's structural and provenance rules. It would not establish:
 
 The authority-integrity system must independently establish the authority for
 every tested effect.
+
+The implementation and its content-addressed public artifacts are documented
+in [federation/fet-001](federation/fet-001/README.md). They create no federated
+runtime dependency and no FET-001 result claim.
 
 ## Failure behavior
 

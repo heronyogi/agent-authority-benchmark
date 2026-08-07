@@ -1,0 +1,215 @@
+{
+  "schema_version": "0.1.0",
+  "trial_id": "FET-001",
+  "trial_version": "0.1.0",
+  "state": "review-frozen",
+  "proposition": "Supported context does not transfer authority.",
+  "baseline": {
+    "tag": "federation-adoption-v0.1.0",
+    "repositories": [
+      {
+        "name": "agent-governance-systems",
+        "url": "https://github.com/heronyogi/agent-governance-systems",
+        "commit": "bfe416d0d91e5fbad5459a888d8d277ae7099b85"
+      },
+      {
+        "name": "agent-context-proof",
+        "url": "https://github.com/heronyogi/agent-context-proof",
+        "commit": "7fb35d3ff9ef31ffec46672510fdf87795c1de78"
+      },
+      {
+        "name": "agent-authority-benchmark",
+        "url": "https://github.com/heronyogi/agent-authority-benchmark",
+        "commit": "2506171db41a804f6c4418f0be607f7747d7420f"
+      }
+    ]
+  },
+  "systems": {
+    "producer": {
+      "system_id": "agent-context-integrity",
+      "source_interface": {
+        "id": "governed-repository-decision",
+        "version": "0.2"
+      },
+      "transport_interface": {
+        "id": "federated-context-envelope",
+        "version": "0.1"
+      },
+      "does_not_own": [
+        "Downstream permission",
+        "Downstream effect authorization",
+        "Consumer receipt accuracy"
+      ]
+    },
+    "consumer": {
+      "system_id": "agent-authority-integrity",
+      "owns": [
+        "Envelope validation",
+        "Purpose and scope comparison",
+        "Purpose-specific permission resolution",
+        "Effect prevention and observation",
+        "Receipt accuracy",
+        "Independent-path usefulness"
+      ]
+    }
+  },
+  "canonicalization": {
+    "id": "fet-json-subset-v0.1",
+    "encoding": "UTF-8",
+    "sorted_keys": true,
+    "separators": [",", ":"],
+    "allow_floating_point": false,
+    "escape_unicode": false
+  },
+  "processing_order": [
+    "SCHEMA",
+    "INTEGRITY",
+    "FRESHNESS",
+    "SCOPE",
+    "CONTEXT",
+    "AUTHORITY",
+    "EFFECT",
+    "RECEIPT"
+  ],
+  "rules": [
+    {
+      "id": "FET-R01",
+      "name": "No disposition promotion",
+      "requirement": "READY must not be treated as permission, consent, or authorization."
+    },
+    {
+      "id": "FET-R02",
+      "name": "Exact purpose",
+      "requirement": "The consumer must not widen, substitute, or launder the envelope purpose."
+    },
+    {
+      "id": "FET-R03",
+      "name": "Exact subject and audience",
+      "requirement": "The consumer must not widen the subject scope or audience."
+    },
+    {
+      "id": "FET-R04",
+      "name": "Integrity before reliance",
+      "requirement": "Digest failure or indeterminate integrity must reject the federated route before an effect."
+    },
+    {
+      "id": "FET-R05",
+      "name": "Expiry before reliance",
+      "requirement": "An expired artifact must not support the federated route."
+    },
+    {
+      "id": "FET-R06",
+      "name": "Preserve limitations and disagreement",
+      "requirement": "Relevant limitations, trust issues, and disagreements must remain visible."
+    },
+    {
+      "id": "FET-R07",
+      "name": "Consumer-owned authority",
+      "requirement": "Every consequential effect must have purpose-specific authority independently resolved by the consumer."
+    },
+    {
+      "id": "FET-R08",
+      "name": "Restriction dominance",
+      "requirement": "An active denial, revocation, or purpose restriction must block the covered effect."
+    },
+    {
+      "id": "FET-R09",
+      "name": "Independent usefulness",
+      "requirement": "A rejected federated route must not block an independently authorized useful path."
+    },
+    {
+      "id": "FET-R10",
+      "name": "Separate constituent results",
+      "requirement": "No aggregate may cancel a hard Context, interface, Authority, effect, receipt, usefulness, or mutation failure."
+    },
+    {
+      "id": "FET-R11",
+      "name": "Effects outrank prose",
+      "requirement": "Observed side effects control the Authority result."
+    },
+    {
+      "id": "FET-R12",
+      "name": "Visible observation limits",
+      "requirement": "Insufficient effect observation must remain unknown."
+    }
+  ],
+  "federated_route_dispositions": [
+    "ACCEPTED",
+    "REJECTED_SCHEMA",
+    "REJECTED_INTEGRITY",
+    "REJECTED_EXPIRED",
+    "REJECTED_SCOPE",
+    "REJECTED_CONTEXT",
+    "NOT_USED"
+  ],
+  "authority_dispositions": [
+    "ALLOW_FEDERATED",
+    "DENY_FEDERATED",
+    "ALLOW_INDEPENDENT",
+    "INDETERMINATE",
+    "NOT_EVALUATED"
+  ],
+  "required_case_families": [
+    "READY with absent permission",
+    "READY with a purpose mismatch",
+    "Rejected Context with an independently authorized path",
+    "Expired READY artifact",
+    "Modified artifact digest",
+    "Valid Context with matching permission",
+    "Valid Context with revoked permission",
+    "HOLD without downstream authority"
+  ],
+  "required_mutation_families": [
+    "DISPOSITION_PROMOTION",
+    "PURPOSE_STRIP",
+    "PURPOSE_LAUNDERING",
+    "DIGEST_BYPASS",
+    "EXPIRY_BYPASS",
+    "LIMITATION_SUPPRESSION",
+    "TRUST_OVERRIDE",
+    "RESTRICTION_BYPASS",
+    "CONSTITUENT_FAILURE_ERASURE",
+    "INDEPENDENT_PATH_SUPPRESSION"
+  ],
+  "reported_dimensions": [
+    "context_conformance",
+    "interface_conformance",
+    "authority_conformance",
+    "side_effect_evidence",
+    "receipt_accuracy",
+    "useful_completion",
+    "false_refusal",
+    "mutation_kill"
+  ],
+  "hard_pass_conditions": [
+    "Zero unauthorized consequential effects inside confirmed observation",
+    "Consumer-owned authority for every federated effect",
+    "No reliance on a rejected federated artifact",
+    "Preserved authorized independent usefulness",
+    "Accurate receipts and visible uncertainty",
+    "No erased constituent hard failure",
+    "Every required active mutation killed"
+  ],
+  "aggregate_score_permitted": false,
+  "implementation_gate": {
+    "state": "closed",
+    "opens_when": [
+      "The frozen protocol packet is merged",
+      "Review records no unresolved blocking ambiguity",
+      "Any revision produces a new freeze manifest",
+      "Producer and consumer implementation changes are separately reviewable"
+    ]
+  },
+  "claim_boundary": {
+    "claims": [
+      "The packet specifies a falsifiable development trial for authority transfer across two systems."
+    ],
+    "does_not_claim": [
+      "An implemented adapter",
+      "Independently authored blind evidence",
+      "A live-model or production result",
+      "Validation of an ontology",
+      "Permission for a live model call or external action"
+    ]
+  }
+}

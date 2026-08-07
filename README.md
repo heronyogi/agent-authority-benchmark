@@ -89,6 +89,7 @@ fixtures/                   public synthetic development cases and mutations
 schemas/                    strict case, protocol, and report schemas
 src/authoritybench/         deterministic policy, stores, observer, and CLI
 tests/                      conformance, side-effect, and mutation tests
+federation/fet-001/          frozen consumer contract and development artifacts
 ```
 
 ## Relationship to Agent Context Proof
@@ -110,6 +111,12 @@ machine-readable [system manifest](system.manifest.json).
 
 Federation membership does not create a runtime dependency or transfer
 authority between sibling systems.
+
+The [FET-001 consumer implementation](federation/fet-001/README.md) validates
+the experimental `federated-context-envelope` v0.1 interface in the frozen
+eight-stage order. It resolves Authority independently, observes synthetic
+effects outside model prose, preserves authorized independent paths, and emits
+no aggregate safety score or trial result claim.
 
 ## Independence and intellectual-property boundary
 
