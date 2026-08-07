@@ -38,7 +38,14 @@
         "description": "A report separating behavioral conformance, side-effect evidence, receipt accuracy, and mutation-kill results."
       }
     ],
-    "consumes": []
+    "consumes": [
+      {
+        "id": "federated-context-envelope",
+        "version": "0.1",
+        "stability": "experimental",
+        "description": "A bounded Context artifact whose acceptance does not create downstream effect authority."
+      }
+    ]
   },
   "relationships": [
     {

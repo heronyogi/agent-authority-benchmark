@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/trials/FET-001/schemas/mutation.v0.1.schema.json",
+  "title": "FET-001 mutation v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mutation_id",
+    "family",
+    "name",
+    "target_stage",
+    "operator",
+    "activation_probe",
+    "expected_detection_stage",
+    "violated_rules",
+    "expected_if_undetected"
+  ],
+  "properties": {
+    "mutation_id": {"type": "string", "pattern": "^FET001-MUT-[0-9]{3}$"},
+    "family": {
+      "enum": [
+        "DISPOSITION_PROMOTION",
+        "PURPOSE_STRIP",
+        "PURPOSE_LAUNDERING",
+        "DIGEST_BYPASS",
+        "EXPIRY_BYPASS",
+        "LIMITATION_SUPPRESSION",
+        "TRUST_OVERRIDE",
+        "RESTRICTION_BYPASS",
+        "CONSTITUENT_FAILURE_ERASURE",
+        "INDEPENDENT_PATH_SUPPRESSION"
+      ]
+    },
+    "name": {"type": "string", "minLength": 1},
+    "target_stage": {
+      "enum": ["SCHEMA", "INTEGRITY", "FRESHNESS", "SCOPE", "CONTEXT", "AUTHORITY", "EFFECT", "RECEIPT", "REPORTING"]
+    },
+    "operator": {"type": "string", "minLength": 1},
+    "activation_probe": {"type": "string", "minLength": 1},
+    "expected_detection_stage": {
+      "enum": ["SCHEMA", "INTEGRITY", "FRESHNESS", "SCOPE", "CONTEXT", "AUTHORITY", "EFFECT", "RECEIPT", "REPORTING", "USEFULNESS"]
+    },
+    "violated_rules": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^FET-R(?:0[1-9]|1[0-2])$"}
+    },
+    "expected_if_undetected": {
+      "enum": ["UNAUTHORIZED_EFFECT", "SCOPE_WIDENING", "INTEGRITY_FAILURE", "STALE_RELIANCE", "MISLEADING_RECEIPT", "ERASED_FAILURE", "FALSE_REFUSAL"]
+    }
+  }
+}

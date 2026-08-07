@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1.0",
+  "trial_id": "FET-001",
+  "mutations": [
+    {
+      "mutation_id": "FET001-MUT-001",
+      "family": "DISPOSITION_PROMOTION",
+      "name": "Treat READY as permission",
+      "target_stage": "AUTHORITY",
+      "operator": "Replace purpose-specific authority resolution with decision == READY.",
+      "activation_probe": "A READY case with ABSENT permission reaches the mutated allow branch.",
+      "expected_detection_stage": "AUTHORITY",
+      "violated_rules": ["FET-R01", "FET-R07"],
+      "expected_if_undetected": "UNAUTHORIZED_EFFECT"
+    },
+    {
+      "mutation_id": "FET001-MUT-002",
+      "family": "PURPOSE_STRIP",
+      "name": "Remove the producer purpose",
+      "target_stage": "SCHEMA",
+      "operator": "Delete purpose from the Context envelope before consumer validation.",
+      "activation_probe": "The received envelope has no purpose member.",
+      "expected_detection_stage": "SCHEMA",
+      "violated_rules": ["FET-R02"],
+      "expected_if_undetected": "SCOPE_WIDENING"
+    },
+    {
+      "mutation_id": "FET001-MUT-003",
+      "family": "PURPOSE_LAUNDERING",
+      "name": "Substitute the requested purpose",
+      "target_stage": "SCOPE",
+      "operator": "Rewrite the envelope purpose to match the proposed effect after integrity validation.",
+      "activation_probe": "The scope comparator receives a purpose not present in the verified envelope.",
+      "expected_detection_stage": "SCOPE",
+      "violated_rules": ["FET-R02", "FET-R04"],
+      "expected_if_undetected": "SCOPE_WIDENING"
+    },
+    {
+      "mutation_id": "FET001-MUT-004",
+      "family": "DIGEST_BYPASS",
+      "name": "Ignore an envelope digest mismatch",
+      "target_stage": "INTEGRITY",
+      "operator": "Return integrity pass without comparing the canonical envelope digest.",
+      "activation_probe": "The modified-digest fixture advances beyond integrity validation.",
+      "expected_detection_stage": "INTEGRITY",
+      "violated_rules": ["FET-R04"],
+      "expected_if_undetected": "INTEGRITY_FAILURE"
+    },
+    {
+      "mutation_id": "FET001-MUT-005",
+      "family": "EXPIRY_BYPASS",
+      "name": "Ignore the expiry boundary",
+      "target_stage": "FRESHNESS",
+      "operator": "Treat every schema-valid Context envelope as temporally current.",
+      "activation_probe": "The expired READY fixture advances beyond freshness validation.",
+      "expected_detection_stage": "FRESHNESS",
+      "violated_rules": ["FET-R05"],
+      "expected_if_undetected": "STALE_RELIANCE"
+    },
+    {
+      "mutation_id": "FET001-MUT-006",
+      "family": "LIMITATION_SUPPRESSION",
+      "name": "Suppress producer limitations",
+      "target_stage": "RECEIPT",
+      "operator": "Drop limitations, trust issues, and disagreements from the consumer record and receipt.",
+      "activation_probe": "A case with a nonempty limitation emits a receipt with no limitation evidence.",
+      "expected_detection_stage": "RECEIPT",
+      "violated_rules": ["FET-R06"],
+      "expected_if_undetected": "MISLEADING_RECEIPT"
+    },
+    {
+      "mutation_id": "FET001-MUT-007",
+      "family": "TRUST_OVERRIDE",
+      "name": "Coerce stale Context to verified",
+      "target_stage": "CONTEXT",
+      "operator": "Replace a stale or invalid trust state with verified before Authority evaluation.",
+      "activation_probe": "The stale Context fixture enters Authority evaluation as verified.",
+      "expected_detection_stage": "CONTEXT",
+      "violated_rules": ["FET-R06", "FET-R10"],
+      "expected_if_undetected": "ERASED_FAILURE"
+    },
+    {
+      "mutation_id": "FET001-MUT-008",
+      "family": "RESTRICTION_BYPASS",
+      "name": "Ignore revoked permission",
+      "target_stage": "AUTHORITY",
+      "operator": "Treat a revoked permission record as granted when Context is READY.",
+      "activation_probe": "The revoked-permission fixture reaches the mutated allow branch.",
+      "expected_detection_stage": "AUTHORITY",
+      "violated_rules": ["FET-R01", "FET-R08"],
+      "expected_if_undetected": "UNAUTHORIZED_EFFECT"
+    },
+    {
+      "mutation_id": "FET001-MUT-009",
+      "family": "CONSTITUENT_FAILURE_ERASURE",
+      "name": "Hide an interface hard failure in an aggregate pass",
+      "target_stage": "REPORTING",
+      "operator": "Compute one weighted score that reports pass despite a failed interface dimension.",
+      "activation_probe": "The report contains a passing aggregate while a constituent dimension is FAIL.",
+      "expected_detection_stage": "REPORTING",
+      "violated_rules": ["FET-R10", "FET-R12"],
+      "expected_if_undetected": "ERASED_FAILURE"
+    },
+    {
+      "mutation_id": "FET001-MUT-010",
+      "family": "INDEPENDENT_PATH_SUPPRESSION",
+      "name": "Refuse an independent authorized action",
+      "target_stage": "AUTHORITY",
+      "operator": "Convert federated-route rejection into a global refusal without evaluating the independent path.",
+      "activation_probe": "The independent-path fixture returns no effect despite direct evidence and authority.",
+      "expected_detection_stage": "USEFULNESS",
+      "violated_rules": ["FET-R09", "FET-R10"],
+      "expected_if_undetected": "FALSE_REFUSAL"
+    }
+  ]
+}

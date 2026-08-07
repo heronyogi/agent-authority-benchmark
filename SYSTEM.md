@@ -41,8 +41,12 @@ The system provides `authority-conformance-report` v0.1 as an experimental
 artifact. The report separates behavioral conformance, side-effect evidence,
 receipt accuracy, and mutation-kill results.
 
-The system currently consumes no federated runtime interface and has no runtime
-or evaluation dependency on another registered system.
+For FET-001 the system also consumes `federated-context-envelope` v0.1 as an
+experimental artifact. The consumer validates and preserves the artifact, then
+resolves purpose-specific Authority independently before any effect.
+
+Consuming the artifact does not create a runtime-system or evaluation-system
+dependency on another registered system.
 
 ## Relationship
 

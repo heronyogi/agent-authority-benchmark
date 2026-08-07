@@ -14,6 +14,16 @@ def test_system_manifest_preserves_independence_and_claim_boundary() -> None:
         "runtime_systems": [],
         "evaluation_systems": [],
     }
-    assert manifest["interfaces"]["consumes"] == []
+    assert manifest["interfaces"]["consumes"] == [
+        {
+            "id": "federated-context-envelope",
+            "version": "0.1",
+            "stability": "experimental",
+            "description": (
+                "A bounded Context artifact whose acceptance does not create "
+                "downstream effect authority."
+            ),
+        }
+    ]
     assert manifest["claim_boundary"]["does_not_claim"]
     assert manifest["ip_boundary"]["excluded"]

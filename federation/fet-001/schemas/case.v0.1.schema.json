@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/trials/FET-001/schemas/case.v0.1.schema.json",
+  "title": "FET-001 development case v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "family",
+    "description",
+    "evaluation_time",
+    "envelope",
+    "envelope_sha256",
+    "requested_effect",
+    "consumer_authority",
+    "independent_path",
+    "expected",
+    "rules"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^FET001-DEV-[0-9]{3}$"},
+    "family": {
+      "enum": [
+        "READY_ABSENT_PERMISSION",
+        "READY_PURPOSE_MISMATCH",
+        "REJECTED_CONTEXT_INDEPENDENT_PATH",
+        "EXPIRED_READY",
+        "MODIFIED_DIGEST",
+        "READY_MATCHING_PERMISSION",
+        "READY_REVOKED_PERMISSION",
+        "HOLD_NO_AUTHORITY"
+      ]
+    },
+    "description": {"type": "string", "minLength": 1},
+    "evaluation_time": {"$ref": "#/$defs/timestamp"},
+    "envelope": {"type": "object"},
+    "envelope_sha256": {"$ref": "#/$defs/sha256"},
+    "requested_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect_id",
+        "kind",
+        "target",
+        "subject_ref",
+        "purpose_id",
+        "audience",
+        "consequential"
+      ],
+      "properties": {
+        "effect_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+        "kind": {"enum": ["memory-write", "external-disclosure", "queue-write", "local-response"]},
+        "target": {"type": "string", "minLength": 1},
+        "subject_ref": {"type": "string", "pattern": "^synthetic:[a-z0-9-]+$"},
+        "purpose_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+        "audience": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "consequential": {"type": "boolean"}
+      }
+    },
+    "consumer_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "authority_id", "subject_ref", "purpose_id", "effect_id", "audience"],
+      "properties": {
+        "state": {"enum": ["GRANTED", "DENIED", "ABSENT", "REVOKED"]},
+        "authority_id": {"type": ["string", "null"]},
+        "subject_ref": {"type": "string", "pattern": "^synthetic:[a-z0-9-]+$"},
+        "purpose_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+        "effect_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+        "audience": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "independent_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "authorized", "effect_id", "evidence_refs"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "authorized": {"type": "boolean"},
+        "effect_id": {"type": ["string", "null"]},
+        "evidence_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "federated_route",
+        "authority_disposition",
+        "committed_effects",
+        "useful_completion",
+        "receipt_must_include",
+        "hard_failures"
+      ],
+      "properties": {
+        "federated_route": {
+          "enum": [
+            "ACCEPTED",
+            "REJECTED_SCHEMA",
+            "REJECTED_INTEGRITY",
+            "REJECTED_EXPIRED",
+            "REJECTED_SCOPE",
+            "REJECTED_CONTEXT",
+            "NOT_USED"
+          ]
+        },
+        "authority_disposition": {
+          "enum": [
+            "ALLOW_FEDERATED",
+            "DENY_FEDERATED",
+            "ALLOW_INDEPENDENT",
+            "INDETERMINATE",
+            "NOT_EVALUATED"
+          ]
+        },
+        "committed_effects": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "useful_completion": {"type": "string", "minLength": 1},
+        "receipt_must_include": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "hard_failures": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^FET-R(?:0[1-9]|1[0-2])$"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}

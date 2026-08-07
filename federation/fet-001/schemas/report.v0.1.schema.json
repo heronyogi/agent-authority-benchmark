@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heronyogi/agent-governance-systems/blob/main/trials/FET-001/schemas/report.v0.1.schema.json",
+  "title": "FET-001 report v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_schema",
+    "trial_id",
+    "trial_version",
+    "artifact_digests",
+    "implementation_identities",
+    "observation_boundary",
+    "case_results",
+    "dimension_results",
+    "mutation_results",
+    "hard_failures",
+    "bounded_claim"
+  ],
+  "properties": {
+    "report_schema": {"const": "0.1.0"},
+    "trial_id": {"const": "FET-001"},
+    "trial_version": {"const": "0.1.0"},
+    "artifact_digests": {"$ref": "#/$defs/digestMap"},
+    "implementation_identities": {"$ref": "#/$defs/digestMap"},
+    "observation_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["systems", "tools", "stores", "queues", "downstream_agents", "known_gaps"],
+      "properties": {
+        "systems": {"$ref": "#/$defs/strings"},
+        "tools": {"$ref": "#/$defs/strings"},
+        "stores": {"$ref": "#/$defs/strings"},
+        "queues": {"$ref": "#/$defs/strings"},
+        "downstream_agents": {"$ref": "#/$defs/strings"},
+        "known_gaps": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "case_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "context_conformance",
+          "interface_conformance",
+          "authority_conformance",
+          "federated_route",
+          "authority_disposition",
+          "effect_attempts",
+          "committed_effects",
+          "receipt_accuracy",
+          "useful_completion",
+          "false_refusal",
+          "hard_failures"
+        ],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^FET001-(?:DEV|BLIND)-[0-9]{3}$"},
+          "context_conformance": {"$ref": "#/$defs/result"},
+          "interface_conformance": {"$ref": "#/$defs/result"},
+          "authority_conformance": {"$ref": "#/$defs/result"},
+          "federated_route": {"type": "string", "minLength": 1},
+          "authority_disposition": {"type": "string", "minLength": 1},
+          "effect_attempts": {"$ref": "#/$defs/strings"},
+          "committed_effects": {"$ref": "#/$defs/strings"},
+          "receipt_accuracy": {"$ref": "#/$defs/result"},
+          "useful_completion": {"$ref": "#/$defs/result"},
+          "false_refusal": {"type": "boolean"},
+          "hard_failures": {"$ref": "#/$defs/strings"}
+        }
+      }
+    },
+    "dimension_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_conformance",
+        "interface_conformance",
+        "authority_conformance",
+        "side_effect_evidence",
+        "receipt_accuracy",
+        "useful_completion",
+        "false_refusal",
+        "mutation_kill"
+      ],
+      "properties": {
+        "context_conformance": {"$ref": "#/$defs/result"},
+        "interface_conformance": {"$ref": "#/$defs/result"},
+        "authority_conformance": {"$ref": "#/$defs/result"},
+        "side_effect_evidence": {"$ref": "#/$defs/result"},
+        "receipt_accuracy": {"$ref": "#/$defs/result"},
+        "useful_completion": {"$ref": "#/$defs/result"},
+        "false_refusal": {"$ref": "#/$defs/result"},
+        "mutation_kill": {"$ref": "#/$defs/result"}
+      }
+    },
+    "mutation_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mutation_id", "activated", "activation_evidence", "killed", "detection_stage", "effect_occurred"],
+        "properties": {
+          "mutation_id": {"type": "string", "pattern": "^FET001-MUT-[0-9]{3}$"},
+          "activated": {"type": "boolean"},
+          "activation_evidence": {"type": "string", "minLength": 1},
+          "killed": {"type": "boolean"},
+          "detection_stage": {"type": ["string", "null"]},
+          "effect_occurred": {"type": ["boolean", "null"]}
+        }
+      }
+    },
+    "hard_failures": {"$ref": "#/$defs/strings"},
+    "bounded_claim": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "result": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
+    "digestMap": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    }
+  }
+}
