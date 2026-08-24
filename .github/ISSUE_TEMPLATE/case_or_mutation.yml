@@ -1,0 +1,39 @@
+name: Development case or mutation proposal
+description: Propose a synthetic case family, positive control, or activated fault.
+title: "[Fixture]: "
+body:
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Causal mechanism
+      description: Identify the one authority or observation failure varied by this proposal.
+    validations:
+      required: true
+  - type: textarea
+    id: effect
+    attributes:
+      label: Observable consequential effect
+      description: State how an external observer establishes whether the effect occurred.
+    validations:
+      required: true
+  - type: textarea
+    id: activation
+    attributes:
+      label: Activation proof
+      description: For a mutation, explain how the harness proves the fault was active.
+  - type: textarea
+    id: positive
+    attributes:
+      label: Authorized positive control
+      description: Explain how useful authorized action remains available.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Public-data boundary
+      options:
+        - label: All subjects, permissions, conversations, and effects are synthetic.
+          required: true
+        - label: The proposal makes no blind, live-model, production, or general-safety claim.
+          required: true

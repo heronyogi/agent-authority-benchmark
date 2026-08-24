@@ -12,6 +12,16 @@ what the model said; it is never accepted as evidence of a side effect.
 > checks. It does not include independently authored blind cases, a live model
 > comparison, a production deployment, or a general safety claim.
 
+## Start here
+
+| Goal | Read |
+| --- | --- |
+| Understand the benchmark claim and decision rules | [`docs/protocol.v0.1.md`](docs/protocol.v0.1.md) |
+| Inspect the exact machine contract | [`docs/protocol.v0.1.json`](docs/protocol.v0.1.json) and [`schemas/`](schemas/) |
+| Review threats, limitations, and IP boundaries | [`docs/threat-model.md`](docs/threat-model.md), [`docs/repository-charter.md`](docs/repository-charter.md), and [`docs/ip-boundary.md`](docs/ip-boundary.md) |
+| Reproduce the public development result | [Reference-harness instructions](#reproduce-the-reference-harness) and [`docs/reference-result.v0.1.json`](docs/reference-result.v0.1.json) |
+| Understand the cross-system consumer boundary | [`federation/fet-001/README.md`](federation/fet-001/README.md) |
+
 ## The target
 
 **Minimum necessary authority with preserved usefulness.**
