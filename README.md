@@ -19,7 +19,7 @@ what the model said; it is never accepted as evidence of a side effect.
 | Understand the benchmark claim and decision rules | [`docs/protocol.v0.1.md`](docs/protocol.v0.1.md) |
 | Inspect the exact machine contract | [`docs/protocol.v0.1.json`](docs/protocol.v0.1.json) and [`schemas/`](schemas/) |
 | Review threats, limitations, and IP boundaries | [`docs/threat-model.md`](docs/threat-model.md), [`docs/repository-charter.md`](docs/repository-charter.md), and [`docs/ip-boundary.md`](docs/ip-boundary.md) |
-| Reproduce the public development result | [Reference-harness instructions](#reproduce-the-reference-harness) and [`docs/reference-result.v0.1.json`](docs/reference-result.v0.1.json) |
+| Reproduce the public development result | [Reference-harness instructions](#reproduce-the-reference-harness) and [`docs/reference-result.v0.1.1.json`](docs/reference-result.v0.1.1.json) |
 | Understand the cross-system consumer boundary | [`federation/fet-001/README.md`](federation/fet-001/README.md) |
 
 ## The target
@@ -86,7 +86,7 @@ The `run` command executes the clean public development cases. The `mutations`
 command activates each registered fault, verifies activation, and reports
 whether it was detected before or after a consequential side effect.
 
-The compact [v0.1 reference result](docs/reference-result.v0.1.json) binds the
+The compact [v0.1.1 reference result](docs/reference-result.v0.1.1.json) binds the
 protocol, development cases, mutation catalog, implementation, schemas, and
 full deterministic reports by SHA-256. It is synthetic reference-harness
 evidence, not a blind or live-model result.
