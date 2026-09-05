@@ -54,11 +54,11 @@ class EffectReceipt:
     authority_disposition: str
     observed_effects: tuple[str, ...]
     statements: tuple[str, ...]
-    context_decision: str
-    trust_state: str
-    trust_issues: tuple[str, ...]
-    limitations: tuple[str, ...]
-    disagreements: tuple[str, ...]
+    context_decision: str | None
+    trust_state: str | None
+    trust_issues: tuple[str, ...] | None
+    limitations: tuple[str, ...] | None
+    disagreements: tuple[str, ...] | None
 
 
 @dataclass(frozen=True)
@@ -145,6 +145,9 @@ def _strict_object(
 ) -> dict[str, Any] | None:
     if not isinstance(value, dict):
         errors.append(f"{path}: expected object")
+        return None
+    if not all(isinstance(key, str) for key in value):
+        errors.append(f"{path}: object keys must be strings")
         return None
     missing = sorted(keys - set(value))
     unexpected = sorted(set(value) - keys)
@@ -363,6 +366,13 @@ def validate_fet001_envelope(envelope: object) -> tuple[str, ...]:
         errors,
         pattern=_TIMESTAMP,
     )
+    for field_name in ("created_at", "expires_at"):
+        value = root.get(field_name)
+        if isinstance(value, str) and _TIMESTAMP.fullmatch(value):
+            try:
+                _parse_timestamp(value)
+            except ValueError:
+                errors.append(f"envelope.{field_name}: invalid calendar timestamp")
     return tuple(sorted(set(errors)))
 
 
@@ -414,7 +424,7 @@ def _receipt_statements(
     disposition: str,
     authority_state: str,
     committed: tuple[str, ...],
-    context_decision: str,
+    context_decision: str | None,
 ) -> tuple[str, ...]:
     statements = []
     if route == "ACCEPTED":
@@ -456,7 +466,7 @@ def _completion_statement(
     route: str,
     disposition: str,
     authority_state: str,
-    context_decision: str,
+    context_decision: str | None,
 ) -> str:
     if disposition == "ALLOW_INDEPENDENT":
         return (
@@ -486,6 +496,38 @@ def _completion_statement(
     return "Report that the bounded federated route cannot authorize this effect."
 
 
+def _context_fields(envelope: object) -> dict[str, Any]:
+    """Retain typed producer metadata; absent or malformed values stay unavailable.
+
+    These fields are descriptive only. SCHEMA/INTEGRITY stage evidence determines
+    whether the consumer may rely on them. The original case retains raw inputs.
+    """
+
+    root = envelope if isinstance(envelope, dict) else {}
+    trust = root.get("trust")
+    trust = trust if isinstance(trust, dict) else {}
+
+    def choice(value: object, choices: set[str]) -> str | None:
+        return value if isinstance(value, str) and value in choices else None
+
+    def strings(value: object) -> tuple[str, ...] | None:
+        if isinstance(value, list) and all(isinstance(item, str) for item in value):
+            return tuple(value)
+        return None
+
+    return {
+        "context_decision": choice(
+            root.get("decision"), {"READY", "HOLD", "INDETERMINATE"}
+        ),
+        "trust_state": choice(
+            trust.get("state"), {"verified", "invalid", "stale", "ambiguous"}
+        ),
+        "trust_issues": strings(trust.get("issues")),
+        "limitations": strings(root.get("limitations")),
+        "disagreements": strings(root.get("disagreements")),
+    }
+
+
 def _execute_fet001_case(
     case: dict[str, Any], *, fault_family: str | None = None
 ) -> _RawExecution:
@@ -503,7 +545,8 @@ def _execute_fet001_case(
         stages.append(StageEvidence(name, status, evidence))
 
     if fault_family == "PURPOSE_STRIP":
-        working.pop("purpose", None)
+        if isinstance(working, dict):
+            working.pop("purpose", None)
         activation = "purpose member removed before schema validation"
     schema_errors = validate_fet001_envelope(working)
     if schema_errors:
@@ -611,6 +654,7 @@ def _execute_fet001_case(
     stage("EFFECT", "PASS", "external observer recorded attempts and commitments")
 
     committed = tuple(observer.committed)
+    context_fields = _context_fields(working)
     receipt = EffectReceipt(
         federated_route=route,
         authority_disposition=disposition,
@@ -620,13 +664,9 @@ def _execute_fet001_case(
             disposition,
             authority["state"],
             committed,
-            working["decision"],
+            context_fields["context_decision"],
         ),
-        context_decision=working["decision"],
-        trust_state=working["trust"]["state"],
-        trust_issues=tuple(working["trust"]["issues"]),
-        limitations=tuple(working["limitations"]),
-        disagreements=tuple(working["disagreements"]),
+        **context_fields,
     )
     if fault_family == "LIMITATION_SUPPRESSION":
         receipt = EffectReceipt(
@@ -646,7 +686,7 @@ def _execute_fet001_case(
         route,
         disposition,
         authority["state"],
-        working["decision"],
+        context_fields["context_decision"],
     )
 
     aggregate_claim = None
@@ -696,13 +736,8 @@ def _score_execution(
         context_stage_ok = stage_status["CONTEXT"] == "PASS"
     receipt = raw.receipt
     context_preserved = all(
-        [
-            receipt.context_decision == original["decision"],
-            receipt.trust_state == original["trust"]["state"],
-            receipt.trust_issues == tuple(original["trust"]["issues"]),
-            receipt.limitations == tuple(original["limitations"]),
-            receipt.disagreements == tuple(original["disagreements"]),
-        ]
+        getattr(receipt, name) == value
+        for name, value in _context_fields(original).items()
     )
     context_ok = context_stage_ok and context_preserved
 

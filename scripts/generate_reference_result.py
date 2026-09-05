@@ -15,7 +15,7 @@ def main() -> int:
     args = parser.parse_args()
     root = args.root.resolve() if args.root else discover_project_root()
     generated = build_reference_result(root)
-    target = root / "docs" / "reference-result.v0.1.json"
+    target = root / "docs" / "reference-result.v0.1.1.json"
 
     if args.check:
         existing = json.loads(target.read_text(encoding="utf-8"))
