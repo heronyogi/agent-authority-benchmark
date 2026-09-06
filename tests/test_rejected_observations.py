@@ -88,3 +88,21 @@ def test_schema_rejection_keeps_separately_authorized_independent_path() -> None
     assert result.authority_disposition == "ALLOW_INDEPENDENT"
     assert result.committed_effects == ("open-review-ticket",)
     assert result.receipt.context_decision is None
+
+
+@pytest.mark.parametrize("limitations", [[], ["Synthetic limitation"]])
+def test_rejected_metadata_preserves_field_specific_empty_list_rules(
+    limitations: list[str],
+) -> None:
+    case = _case("FET001-DEV-001")
+    del case["envelope"]["purpose"]
+    case["envelope"]["limitations"] = limitations
+    case["envelope"]["trust"]["issues"] = []
+    case["envelope"]["disagreements"] = []
+    result = run_fet001_case(case)
+    assert result.federated_route == "REJECTED_SCHEMA"
+    assert result.receipt.limitations == (tuple(limitations) if limitations else None)
+    assert result.receipt.trust_issues == ()
+    assert result.receipt.disagreements == ()
+    assert result.committed_effects == ()
+    _report_case_validator().validate(result.to_report_case_result())

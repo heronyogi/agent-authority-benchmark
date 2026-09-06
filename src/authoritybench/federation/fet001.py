@@ -510,8 +510,12 @@ def _context_fields(envelope: object) -> dict[str, Any]:
     def choice(value: object, choices: set[str]) -> str | None:
         return value if isinstance(value, str) and value in choices else None
 
-    def strings(value: object) -> tuple[str, ...] | None:
-        if isinstance(value, list) and all(isinstance(item, str) for item in value):
+    def strings(value: object, *, minimum: int = 0) -> tuple[str, ...] | None:
+        if (
+            isinstance(value, list)
+            and len(value) >= minimum
+            and all(isinstance(item, str) for item in value)
+        ):
             return tuple(value)
         return None
 
@@ -523,7 +527,7 @@ def _context_fields(envelope: object) -> dict[str, Any]:
             trust.get("state"), {"verified", "invalid", "stale", "ambiguous"}
         ),
         "trust_issues": strings(trust.get("issues")),
-        "limitations": strings(root.get("limitations")),
+        "limitations": strings(root.get("limitations"), minimum=1),
         "disagreements": strings(root.get("disagreements")),
     }
 
