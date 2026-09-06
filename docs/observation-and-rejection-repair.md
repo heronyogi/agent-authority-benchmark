@@ -10,6 +10,10 @@ when producer metadata is missing, malformed, or the envelope is not an object.
 Absent or malformed metadata is represented as unavailable (`None`), rather than
 invented READY/trust data or an empty list claiming there were no limitations.
 Typed metadata is descriptive and does not bypass schema or integrity rejection.
+String-array metadata uses the same checks as envelope validation: every member
+must be a nonempty string, members must be unique, and `limitations` requires at
+least one member. Valid empty `trust.issues` and `disagreements` remain available
+as empty tuples; valid arrays preserve their declared order.
 The original case remains the raw input record. Impossible calendar timestamps
 are rejected at SCHEMA before freshness evaluation.
 

@@ -511,13 +511,11 @@ def _context_fields(envelope: object) -> dict[str, Any]:
         return value if isinstance(value, str) and value in choices else None
 
     def strings(value: object, *, minimum: int = 0) -> tuple[str, ...] | None:
-        if (
-            isinstance(value, list)
-            and len(value) >= minimum
-            and all(isinstance(item, str) for item in value)
-        ):
-            return tuple(value)
-        return None
+        if not isinstance(value, list):
+            return None
+        errors: list[str] = []
+        _strings(value, "metadata", errors, minimum=minimum)
+        return None if errors else tuple(value)
 
     return {
         "context_decision": choice(

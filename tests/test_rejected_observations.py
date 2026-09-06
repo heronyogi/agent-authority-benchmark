@@ -106,3 +106,51 @@ def test_rejected_metadata_preserves_field_specific_empty_list_rules(
     assert result.receipt.disagreements == ()
     assert result.committed_effects == ()
     _report_case_validator().validate(result.to_report_case_result())
+
+
+@pytest.mark.parametrize("field", ["limitations", "trust_issues", "disagreements"])
+@pytest.mark.parametrize(
+    "value", [[""], ["valid", ""], ["duplicate", "duplicate"], ["valid", 1]]
+)
+def test_rejected_string_array_metadata_stays_unavailable(
+    field: str, value: list[object]
+) -> None:
+    case = _case("FET001-DEV-001")
+    envelope = case["envelope"]
+    expected = {
+        "limitations": tuple(envelope["limitations"]),
+        "trust_issues": tuple(envelope["trust"]["issues"]),
+        "disagreements": tuple(envelope["disagreements"]),
+    }
+    if field == "trust_issues":
+        envelope["trust"]["issues"] = value
+    else:
+        envelope[field] = value
+    assert validate_fet001_envelope(envelope)
+    result = run_fet001_case(case)
+    assert result.federated_route == "REJECTED_SCHEMA"
+    assert result.stage_status("CONTEXT") == "NOT_EVALUATED"
+    assert result.committed_effects == ()
+    for metadata_field, original in expected.items():
+        assert getattr(result.receipt, metadata_field) == (
+            None if metadata_field == field else original
+        )
+    _report_case_validator().validate(result.to_report_case_result())
+
+
+@pytest.mark.parametrize("field", ["limitations", "trust_issues", "disagreements"])
+def test_valid_string_array_metadata_preserves_order_after_rejection(
+    field: str,
+) -> None:
+    case = _case("FET001-DEV-001")
+    del case["envelope"]["purpose"]
+    value = ["Synthetic z", "Synthetic a"]
+    if field == "trust_issues":
+        case["envelope"]["trust"]["issues"] = value
+    else:
+        case["envelope"][field] = value
+    result = run_fet001_case(case)
+    assert result.federated_route == "REJECTED_SCHEMA"
+    assert getattr(result.receipt, field) == tuple(value)
+    assert result.committed_effects == ()
+    _report_case_validator().validate(result.to_report_case_result())
