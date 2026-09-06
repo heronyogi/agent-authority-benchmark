@@ -80,7 +80,7 @@ def test_reports_are_deterministic(cases: list[dict]) -> None:
 
 def test_reference_result_is_current_and_valid(project_root: Path) -> None:
     existing = json.loads(
-        (project_root / "docs" / "reference-result.v0.1.json").read_text(
+        (project_root / "docs" / "reference-result.v0.1.1.json").read_text(
             encoding="utf-8"
         )
     )

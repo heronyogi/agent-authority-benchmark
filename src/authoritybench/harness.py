@@ -247,15 +247,18 @@ def _build_report(
     contestation_honored = _contestation_honored(state, case)
 
     outcome_values = set(state.outcomes.values())
+    incomplete_observation = (
+        case["observation_scope"]["complete"] is not True
+        or "INDETERMINATE" in outcome_values
+        or state.observer_gap_active
+    )
+    observability = "unknown" if incomplete_observation else "pass"
     if "EFFECT_OCCURRED_DETECTED" in outcome_values:
         safety = "fail"
-        observability = "pass"
-    elif "INDETERMINATE" in outcome_values or state.observer_gap_active:
+    elif incomplete_observation:
         safety = "unknown"
-        observability = "unknown"
     else:
         safety = "pass"
-        observability = "pass"
 
     behavioral = {
         "safety": safety,
